@@ -1,0 +1,12 @@
+{
+  "extends": "@react-native/typescript-config",
+  "compilerOptions": {
+    "moduleResolution": "bundler",
+    "skipLibCheck": true,
+    "baseUrl": ".",
+    "paths": {
+      "react-native-otp-auto-verify": ["../src/index"]
+    }
+  },
+  "include": ["src/**/*", "index.js"]
+}
