@@ -7,7 +7,6 @@
 [![typescript](https://img.shields.io/badge/TypeScript-Ready-blue.svg?style=flat-square)](https://www.typescriptlang.org/)
 [![license](https://img.shields.io/npm/l/react-native-otp-auto-verify.svg?style=flat-square)](https://github.com/kailas-rathod/react-native-otp-auto-verify/blob/main/LICENSE)
 
-Automatic OTP detection on **Android** using the **Google SMS Retriever API** (no `READ_SMS` permission required).
 
 </div>
 
