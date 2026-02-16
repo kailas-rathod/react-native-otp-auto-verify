@@ -27,13 +27,11 @@ In order to detect the message, SMS message must include a hash that identifies 
 | Platform | Support | Notes                                   |
 | -------- | ------- | --------------------------------------- |
 | Android  | ✅      | Requires Google Play services on device |
-| iOS      | ⚠️      | Safe no-op (no auto-read)               |
 
 ## Requirements
 
 - React Native: **0.60+** (autolinking)
 - Android: **minSdkVersion 24+**
-- iOS: supported as a **no-op** (you still need manual OTP UI)
 
 ## Installation
 
@@ -45,11 +43,6 @@ yarn add react-native-otp-auto-verify
 pnpm add react-native-otp-auto-verify
 ```
 
-iOS (React Native CLI projects):
-
-```sh
-npx pod-install
-```
 
 ## Usage
 
