@@ -3,7 +3,6 @@
 <div align="center">
 
 [![npm version](https://img.shields.io/npm/v/react-native-otp-auto-verify.svg?style=flat-square)](https://www.npmjs.com/package/react-native-otp-auto-verify)
-
 [![typescript](https://img.shields.io/badge/TypeScript-Ready-blue.svg?style=flat-square)](https://www.typescriptlang.org/)
 [![license](https://img.shields.io/npm/l/react-native-otp-auto-verify.svg?style=flat-square)](https://github.com/kailas-rathod/react-native-otp-auto-verify/blob/main/LICENSE)
 
