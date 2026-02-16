@@ -3,41 +3,25 @@
 <div align="center">
 
 [![npm version](https://img.shields.io/npm/v/react-native-otp-auto-verify.svg?style=flat-square)](https://www.npmjs.com/package/react-native-otp-auto-verify)
-[![npm downloads](https://img.shields.io/npm/dm/react-native-otp-auto-verify.svg?style=flat-square)](https://www.npmjs.com/package/react-native-otp-auto-verify)
-[![license](https://img.shields.io/npm/l/react-native-otp-auto-verify.svg?style=flat-square)](https://github.com/kailas-rathod/react-native-otp-auto-verify/blob/main/LICENSE)
+
 [![typescript](https://img.shields.io/badge/TypeScript-Ready-blue.svg?style=flat-square)](https://www.typescriptlang.org/)
+[![license](https://img.shields.io/npm/l/react-native-otp-auto-verify.svg?style=flat-square)](https://github.com/kailas-rathod/react-native-otp-auto-verify/blob/main/LICENSE)
 
 Automatic OTP detection on **Android** using the **Google SMS Retriever API** (no `READ_SMS` permission required).
 
 </div>
 
-## Table of contents
 
-- [Features](#features)
-- [Platform support](#platform-support)
-- [Requirements](#requirements)
-- [Installation](#installation)
-- [Usage](#usage)
-  - [1) Get your app hash](#1-get-your-app-hash)
-  - [2) Format your OTP SMS](#2-format-your-otp-sms)
-  - [3) Hook usage (recommended)](#3-hook-usage-recommended)
-  - [4) Imperative usage](#4-imperative-usage)
-- [API](#api)
-- [Timeout behavior](#timeout-behavior)
-- [React Native New Architecture](#react-native-new-architecture)
-- [Troubleshooting](#troubleshooting)
-- [Example app](#example-app)
-- [Contributing](#contributing)
-- [License](#license)
 
 ## Features
 
-- Automatically extracts **4–6 digit** OTPs from SMS on Android
-- Uses Google **SMS Retriever API** (Play Store compliant, **no SMS permissions**)
-- Includes a **React hook** and an **imperative** API
-- Fully typed (**TypeScript**)
-- **React Native New Architecture** (TurboModules) supported
-- iOS is a **safe no-op** (manual OTP entry required)
+Automatic SMS Verification with the SMS Retriever API (Android Only)
+Phone Number Retrieving using the Phone Number Hint API (Android Only)
+Automatic SMS Verification with the SMS Retriever API, you can perform SMS-based user verification in your Android app automatically, without requiring the user to manually type verification codes, and without requiring any extra app permissions.
+
+Message Format/Structure
+In order to detect the message, SMS message must include a hash that identifies your app. This hash can be obtained by using the getHash() method below.
+
 
 ## Platform support
 
