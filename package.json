@@ -33,14 +33,6 @@
   "license": "MIT",
   "author": "Kailas Rathod (https://github.com/kailas-rathod)",
   "type": "commonjs",
-  "exports": {
-    ".": {
-      "source": "./src/index.tsx",
-      "types": "./lib/typescript/src/index.d.ts",
-      "default": "./lib/module/index.js"
-    },
-    "./package.json": "./package.json"
-  },
   "main": "./lib/module/index.js",
   "types": "./lib/typescript/src/index.d.ts",
   "directories": {
@@ -64,9 +56,6 @@
     "!**/__fixtures__",
     "!**/__mocks__",
     "!**/.*"
-  ],
-  "workspaces": [
-    "example"
   ],
   "scripts": {
     "example": "yarn workspace react-native-otp-auto-verify-example",
@@ -170,16 +159,5 @@
         }
       }
     }
-  },
-  "create-react-native-library": {
-    "type": "turbo-module",
-    "languages": "kotlin-objc",
-    "tools": [
-      "eslint",
-      "jest",
-      "lefthook",
-      "release-it"
-    ],
-    "version": "0.57.0"
   }
 }
