@@ -1,13 +1,28 @@
 {
   "name": "react-native-otp-auto-verify",
   "version": "0.1.0",
-  "description": "react-native-otp-auto-verify is a React Native library for automatic OTP detection and verification on Android using the Google SMS Retriever API. It enables secure, permission-less OTP auto-reading without requiring READ_SMS, making it fully Play Store compliant.",
+  "description": "react-native-otp-auto-verify is a React Native library for automatic OTP verification on Android and iOS. It uses the Google SMS Retriever API to detect OTP codes automatically without requiring the READ_SMS permission. The library is fully Play Store compliant, improves user login experience, supports TurboModule, and works with the React Native New Architecture",
   "keywords": [
     "react-native",
-    "ios",
-    "android"
+    "react-native-library",
+    "react-native-otp",
+    "react-native-otp-auto-verify",
+    "react-native-sms",
+    "otp",
+    "otp-verification",
+    "otp-auto-verify",
+    "otp-auto-read",
+    "sms",
+    "sms-retriever",
+    "google-sms-retriever",
+    "android-otp",
+    "ios-otp",
+    "otp-without-permission",
+    "play-store-compliant",
+    "react-native-new-architecture",
+    "turbo-module"
   ],
-  "homepage": "https://github.com/kailas-rathod/react-native-otp-auto-verify#readme",
+  "homepage": "https://github.com/kailas-rathod/react-native-otp-auto-verify?tab=readme-ov-file",
   "bugs": {
     "url": "https://github.com/kailas-rathod/react-native-otp-auto-verify/issues"
   },
@@ -61,9 +76,6 @@
     "lint": "eslint \"**/*.{js,ts,tsx}\"",
     "test": "jest",
     "release": "release-it --only-version"
-  },
-  "dependencies": {
-   
   },
   "devDependencies": {
     "@commitlint/config-conventional": "^19.8.1",
