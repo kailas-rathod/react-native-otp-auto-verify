@@ -1,25 +1,30 @@
 # react-native-otp-auto-verify
 
-<div align="center">
 
-[![npm version](https://img.shields.io/npm/v/react-native-otp-auto-verify.svg?style=flat-square)](https://www.npmjs.com/package/react-native-otp-auto-verify)
-[![typescript](https://img.shields.io/badge/TypeScript-Ready-blue.svg?style=flat-square)](https://www.typescriptlang.org/)
-[![license](https://img.shields.io/npm/l/react-native-otp-auto-verify.svg?style=flat-square)](https://github.com/kailas-rathod/react-native-otp-auto-verify/blob/main/LICENSE)
+[![npm version](https://img.shields.io/npm/v/react-native-otp-auto-verify.svg?style=flat-square)](https://www.npmjs.com/package/react-native-otp-auto-verify)      [![npm downloads](https://img.shields.io/npm/dm/react-native-otp-auto-verify.svg?style=flat-square)](https://www.npmjs.com/package/react-native-otp-auto-verify)      [![license](https://img.shields.io/npm/l/react-native-otp-auto-verify.svg?style=flat-square)](https://github.com/kailas-rathod/react-native-otp-auto-verify/blob/main/LICENSE)         [![typescript](https://img.shields.io/badge/TypeScript-Ready-blue.svg?style=flat-square)](https://www.typescriptlang.org/)
 
+**react-native-otp-auto-verify** is a lightweight and secure React Native OTP auto-verification library for Android, built on the official Google SMS Retriever API. It enables automatic OTP detection without requiring READ_SMS or RECEIVE_SMS permissions, ensuring full Google Play Store compliance and enhanced user trust. Designed for modern authentication flows, this library is ideal for fintech apps, banking applications, e-commerce platforms, and secure login systems.
 
-</div>
+With minimal dependencies and clean architecture, it integrates seamlessly into both React Native Old Architecture and the New Architecture (TurboModule) environments. The solution improves user experience by eliminating manual OTP entry on Android while maintaining strong server-side validation standards.
 
+Works best for onboarding/login flows in **banking**, **fintech**, and authentication-heavy apps.
+Supports both RN Old Architecture and React Native **New Architecture** (TurboModule).
+**Android**: automatic OTP detection.
+**iOS**: auto-OTP is not supported—use manual OTP entry as fallback.
+
+---
+<img width="1536" height="1024" alt="otp" src="https://github.com/user-attachments/assets/e4908e99-e7d1-4a96-a6d2-b92c50090db0" />
 
 
 ## Features
 
-Automatic SMS Verification with the SMS Retriever API (Android Only)
-Phone Number Retrieving using the Phone Number Hint API (Android Only)
-Automatic SMS Verification with the SMS Retriever API, you can perform SMS-based user verification in your Android app automatically, without requiring the user to manually type verification codes, and without requiring any extra app permissions.
-
-Message Format/Structure
-In order to detect the message, SMS message must include a hash that identifies your app. This hash can be obtained by using the getHash() method below.
-
+- ✅ **Automatic OTP detection**: receives OTP from matching SMS and exposes it as `otp` (hook) or `extractedOtp` (listener)
+- ✅ **No SMS permissions**: no access to inbox, avoids sensitive permissions and reduces compliance friction
+- ✅ **App hash security**: OTP SMS must end with your **11-character hash** (only your app can receive it)
+- ✅ **Hook + Imperative API**: `useOtpVerification()` for screens, `activateOtpListener()` for custom flows
+- ✅ **TypeScript**: typed options and return values
+- ✅ **New Architecture ready**: TurboModule implementation; works with Old Architecture too
+---
 
 ## Platform support
 
@@ -69,9 +74,10 @@ Requirements:
 Recommended format:
 
 ```
-<#> Your verification code is 123456
-AbCdEfGhIjK
+Dear Kailas Rathod, 321500 is your OTP for mobile authentication. This OTP is valid for the next 15 minutes. Please DO NOT share it with anyone.
+uW87Uq6teXc
 ```
+nots :- not need for <#> starting 
 
 ### 3) Hook usage (recommended)
 
@@ -124,19 +130,28 @@ sub.remove();
 removeListener();
 ```
 
-## API
+## react-native-otp-auto-verify Architecture Flow
+<img width="1536" height="1024" alt="react-native-otp-auto-verify Architecture Flow" src="https://github.com/user-attachments/assets/11582523-81cb-4904-9de0-56af05b3a3b4" />
+
+## API Reference
 
 ### `useOtpVerification(options?)`
 
-- **options**
-  - `numberOfDigits?: 4 | 5 | 6` (default `6`)
-- **returns**
-  - `hashCode: string`
-  - `otp: string | null`
-  - `sms: string | null`
-  - `timeoutError: boolean`
-  - `startListening(): Promise<void>`
-  - `stopListening(): void`
+Use this on your OTP screen. It manages:
+- getting the app hash (`hashCode`)
+- starting/stopping the SMS Retriever listener
+- extracting OTP and exposing it as `otp`
+
+| Property | Type | Default | Description |
+|----------|------|---------|-------------|
+| `numberOfDigits` | `4 \| 5 \| 6` | `6` | OTP length to extract |
+| `hashCode` | `string` | `''` | App hash (send to backend) |
+| `otp` | `string \| null` | `null` | Extracted OTP |
+| `sms` | `string \| null` | `null` | Full SMS text |
+| `timeoutError` | `boolean` | `false` | Timeout occurred |
+| `startListening` | `() => Promise<void>` | — | Start listening |
+| `stopListening` | `() => void` | — | Stop listening |
+
 
 ### `getHash(): Promise<string[]>`
 
@@ -227,6 +242,10 @@ See [`./example`](./example).
 ## Contributing
 
 See [`CONTRIBUTING.md`](CONTRIBUTING.md).
+
+
+## Keywork
+react native otp auto verify, react native sms retriever api, automatic otp detection android, react native otp autofill, sms retriever react native, otp verification library react native, google play compliant otp library
 
 ## License
 
