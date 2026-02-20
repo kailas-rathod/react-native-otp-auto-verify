@@ -13,6 +13,7 @@ Supports both RN Old Architecture and React Native **New Architecture** (TurboMo
 **iOS**: auto-OTP is not supported—use manual OTP entry as fallback.
 
 ---
+<img width="1536" height="1024" alt="otp" src="https://github.com/user-attachments/assets/e4908e99-e7d1-4a96-a6d2-b92c50090db0" />
 
 
 ## Features
@@ -73,9 +74,15 @@ Requirements:
 Recommended format:
 
 ```
-<#> Your verification code is 123456
+Your verification code is 123456
 AbCdEfGhIjK
 ```
+# Example:-
+```
+Dear Kailas Rathod, 321500 is your OTP for mobile authentication. This OTP is valid for the next 15 minutes. Please DO NOT share it with anyone.
+uW87Uq6teXc
+```
+nots :- not need for <#> starting 
 
 ### 3) Hook usage (recommended)
 
@@ -128,7 +135,9 @@ sub.remove();
 removeListener();
 ```
 
-## API
+## react-native-otp-auto-verify Architecture Flow
+<img width="1536" height="1024" alt="react-native-otp-auto-verify Architecture Flow" src="https://github.com/user-attachments/assets/11582523-81cb-4904-9de0-56af05b3a3b4" />
+
 ## API Reference
 
 ### `useOtpVerification(options?)`
@@ -148,15 +157,6 @@ Use this on your OTP screen. It manages:
 | `startListening` | `() => Promise<void>` | — | Start listening |
 | `stopListening` | `() => void` | — | Stop listening |
 
-- **options**
-  - `numberOfDigits?: 4 | 5 | 6` (default `6`)
-- **returns**
-  - `hashCode: string`
-  - `otp: string | null`
-  - `sms: string | null`
-  - `timeoutError: boolean`
-  - `startListening(): Promise<void>`
-  - `stopListening(): void`
 
 ### `getHash(): Promise<string[]>`
 
@@ -247,6 +247,10 @@ See [`./example`](./example).
 ## Contributing
 
 See [`CONTRIBUTING.md`](CONTRIBUTING.md).
+
+
+## Keywork
+react native otp auto verify, react native sms retriever api, automatic otp detection android, react native otp autofill, sms retriever react native, otp verification library react native, google play compliant otp library
 
 ## License
 
