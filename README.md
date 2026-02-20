@@ -74,11 +74,6 @@ Requirements:
 Recommended format:
 
 ```
-Your verification code is 123456
-AbCdEfGhIjK
-```
-# Example:-
-```
 Dear Kailas Rathod, 321500 is your OTP for mobile authentication. This OTP is valid for the next 15 minutes. Please DO NOT share it with anyone.
 uW87Uq6teXc
 ```
