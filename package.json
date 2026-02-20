@@ -54,19 +54,6 @@
     "cpp",
     "*.podspec",
     "react-native.config.js",
-    "!ios/build",
-    "!android/build",
-    "!android/gradle",
-    "!android/gradlew",
-    "!android/gradlew.bat",
-    "!android/local.properties",
-    "!**/__tests__",
-    "!**/__fixtures__",
-    "!**/__mocks__",
-    "!**/.*"
-  ],
-  "workspaces": [
-    "example"
   ],
   "scripts": {
     "example": "yarn workspace react-native-otp-auto-verify-example",
@@ -88,18 +75,15 @@
     "@types/jest": "^29.5.14",
     "@types/react": "^19.2.0",
     "commitlint": "^19.8.1",
-    "del-cli": "^6.0.0",
     "eslint": "^9.35.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.4",
     "jest": "^29.7.0",
-    "lefthook": "^2.0.3",
     "prettier": "^2.8.8",
     "react": "19.2.0",
     "react-native": "0.83.0",
     "react-native-builder-bob": "0.39.1",
     "release-it": "^19.0.4",
-    "turbo": "^2.5.6",
     "typescript": "^5.9.2"
   },
   "peerDependencies": {
