@@ -2,20 +2,16 @@
 
 ## Supported Versions
 
-Use this section to tell people about which versions of your project are
-currently being supported with security updates.
-
 | Version | Supported          |
 | ------- | ------------------ |
-| 5.1.x   | :white_check_mark: |
-| 5.0.x   | :x:                |
-| 4.0.x   | :white_check_mark: |
-| < 4.0   | :x:                |
+| 0.1.x   | :white_check_mark: |
+| < 0.1   | :x:                |
 
 ## Reporting a Vulnerability
 
-Use this section to tell people how to report a vulnerability.
+Please report security issues via [GitHub Issues](https://github.com/kailas-rathod/react-native-otp-auto-verify/issues). For sensitive reports you may contact the maintainer directly. We aim to acknowledge within 48 hours and will provide updates as we assess and address the issue.
 
-Tell them where to go, how often they can expect to get an update on a
-reported vulnerability, what to expect if the vulnerability is accepted or
-declined, etc.
+## Supply Chain
+
+- **Lockfile**: Use `yarn install --immutable` so builds use only resolved versions from `yarn.lock`.
+- **Updates**: Dependabot opens PRs for dependency updates; review and merge as needed.

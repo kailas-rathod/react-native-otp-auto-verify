@@ -12,6 +12,8 @@ Supports both RN Old Architecture and React Native **New Architecture** (TurboMo
 **Android**: automatic OTP detection.
 **iOS**: auto-OTP is not supported—use manual OTP entry as fallback.
 
+**Connect:** [GitHub](https://github.com/kailas-rathod/react-native-otp-auto-verify) · [npm](https://www.npmjs.com/package/react-native-otp-auto-verify) · [Issues](https://github.com/kailas-rathod/react-native-otp-auto-verify/issues) · [License](https://github.com/kailas-rathod/react-native-otp-auto-verify/blob/main/LICENSE)
+
 ---
 <img width="1536" height="1024" alt="otp" src="https://github.com/user-attachments/assets/e4908e99-e7d1-4a96-a6d2-b92c50090db0" />
 
@@ -78,7 +80,7 @@ Recommended format:
 Dear Kailas Rathod, 321500 is your OTP for mobile authentication. This OTP is valid for the next 15 minutes. Please DO NOT share it with anyone.
 uW87Uq6teXc
 ```
-nots :- not need for <#> starting 
+Note: You do not need `<#>` at the start of the message.
 
 ### 3) Hook usage (recommended)
 
@@ -90,7 +92,7 @@ import { Text, View } from 'react-native';
 import { useOtpVerification } from 'react-native-otp-auto-verify';
 
 export function OtpScreen() {
-  const { hashCode, otp, timeoutError, startListening, stopListening } =
+  const { hashCode, otp, timeoutError, error, startListening, stopListening } =
     useOtpVerification({ numberOfDigits: 6 });
 
   React.useEffect(() => {
@@ -103,6 +105,7 @@ export function OtpScreen() {
       {!!hashCode && <Text>Hash: {hashCode}</Text>}
       {!!otp && <Text>OTP: {otp}</Text>}
       {timeoutError && <Text>Timeout. Tap resend and try again.</Text>}
+      {!!error && <Text>Error: {error.message}</Text>}
     </View>
   );
 }
@@ -190,6 +193,7 @@ Use this on your OTP screen. It manages:
 | `otp` | `string \| null` | `null` | Extracted OTP |
 | `sms` | `string \| null` | `null` | Full SMS text |
 | `timeoutError` | `boolean` | `false` | Timeout occurred |
+| `error` | `Error \| null` | `null` | Set when getHash or startListening fails |
 | `startListening` | `() => Promise<void>` | — | Start listening |
 | `stopListening` | `() => void` | — | Stop listening |
 
@@ -284,10 +288,13 @@ See [`./example`](./example).
 
 See [`CONTRIBUTING.md`](CONTRIBUTING.md).
 
+## Publishing
 
-## Keywork
+Maintainers: see [RELEASE_CHECKLIST.md](./RELEASE_CHECKLIST.md) before publishing a new version to npm.
+
+## Keywords
 react native otp auto verify, react native sms retriever api, automatic otp detection android, react native otp autofill, sms retriever react native, otp verification library react native, google play compliant otp library
 
 ## License
 
-MIT
+[MIT](./LICENSE) — see [LICENSE](./LICENSE) in the repo.
