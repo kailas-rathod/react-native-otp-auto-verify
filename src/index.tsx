@@ -37,6 +37,8 @@ export interface UseOtpVerificationResult {
   sms: string | null;
   /** True when the 5-minute SMS Retriever timeout occurred. */
   timeoutError: boolean;
+  /** Set when getHash fails (non-fatal) or when startListening fails. Cleared when startListening is called again. */
+  error: Error | null;
   /** Start listening for OTP again (e.g. after timeout or error). */
   startListening: () => Promise<void>;
   /** Stop listening and clean up. Call on unmount. */
@@ -53,7 +55,9 @@ export function extractOtp(
   numberOfDigits: OtpDigits = DEFAULT_DIGITS
 ): string | null {
   if (!sms || typeof sms !== 'string') return null;
-  const match = sms.match(OTP_REGEX[numberOfDigits]);
+  const trimmed = sms.trim();
+  if (!trimmed) return null;
+  const match = trimmed.match(OTP_REGEX[numberOfDigits]);
   return match ? match[1]! : null;
 }
 
@@ -98,7 +102,7 @@ export function removeListener(): void {
   }
 }
 
-/** Hook for OTP verification. Stops listener on unmount. */
+/** Hook for OTP verification. Call startListening() to begin; listener is stopped on unmount. */
 export function useOtpVerification(
   options: UseOtpVerificationOptions = {}
 ): UseOtpVerificationResult {
@@ -107,6 +111,7 @@ export function useOtpVerification(
   const [otp, setOtp] = React.useState<string | null>(null);
   const [sms, setSms] = React.useState<string | null>(null);
   const [timeoutError, setTimeoutError] = React.useState(false);
+  const [error, setError] = React.useState<Error | null>(null);
   const subscriptionRef = React.useRef<OtpListenerSubscription | null>(null);
 
   const stopListening = React.useCallback(() => {
@@ -120,15 +125,16 @@ export function useOtpVerification(
     setOtp(null);
     setSms(null);
     setTimeoutError(false);
+    setError(null);
     try {
       const hashes = await getHash();
       setHashCode(hashes[0] ?? '');
-    } catch {
-      // getHash failed; continue to start listener
+    } catch (err) {
+      setError(err instanceof Error ? err : new Error(String(err)));
     }
     try {
       const sub = await activateOtpListener(
-        (smsText: string, extractedOtp: string | null | undefined) => {
+        (smsText, extractedOtp) => {
           setSms(smsText);
           if (smsText === TIMEOUT_MESSAGE) {
             setTimeoutError(true);
@@ -139,9 +145,11 @@ export function useOtpVerification(
         { numberOfDigits }
       );
       subscriptionRef.current = sub;
-    } catch {
+    } catch (err) {
       subscriptionRef.current = null;
-      throw new Error('Failed to start OTP listener');
+      const wrapped = new Error('Failed to start OTP listener', { cause: err });
+      setError(wrapped);
+      throw wrapped;
     }
   }, [numberOfDigits]);
 
@@ -153,10 +161,11 @@ export function useOtpVerification(
       otp,
       sms,
       timeoutError,
+      error,
       startListening,
       stopListening,
     }),
-    [hashCode, otp, sms, timeoutError, startListening, stopListening]
+    [hashCode, otp, sms, timeoutError, error, startListening, stopListening]
   );
 }
 

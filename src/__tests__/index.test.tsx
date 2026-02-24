@@ -22,4 +22,22 @@ describe('extractOtp', () => {
   it('defaults to 6 digits when numberOfDigits not provided', () => {
     expect(extractOtp('Use 555666')).toBe('555666');
   });
+
+  it('returns null for whitespace-only string', () => {
+    expect(extractOtp('   ', 6)).toBeNull();
+    expect(extractOtp('\t\n', 6)).toBeNull();
+  });
+
+  it('trims input before matching', () => {
+    expect(extractOtp('  123456  ', 6)).toBe('123456');
+  });
+
+  it('returns first match when multiple digit groups exist', () => {
+    expect(extractOtp('Code 123456 and 654321', 6)).toBe('123456');
+  });
+
+  it('returns null for non-string input (type guard)', () => {
+    expect(extractOtp(null as unknown as string, 6)).toBeNull();
+    expect(extractOtp(undefined as unknown as string, 6)).toBeNull();
+  });
 });
