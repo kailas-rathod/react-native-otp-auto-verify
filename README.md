@@ -26,11 +26,12 @@ Supports both RN Old Architecture and React Native **New Architecture** (TurboMo
 - ✅ **New Architecture ready**: TurboModule implementation; works with Old Architecture too
 ---
 
-## Platform support
+## Platform Support
 
-| Platform | Support | Notes                                   |
-| -------- | ------- | --------------------------------------- |
-| Android  | ✅      | Requires Google Play services on device |
+| Platform | Support | Notes |
+|----------|----------|-------|
+| Android  | ✅ | Requires Google Play Services on device |
+| iOS      | ✅ Native Only | Uses iOS Security Code AutoFill (manual tap required) |
 
 ## Requirements
 
@@ -129,6 +130,46 @@ sub.remove();
 // or
 removeListener();
 ```
+
+# iOS OTP AutoFill (Native)
+
+iOS does **not** allow third-party libraries to read SMS messages.
+
+Automatic SMS reading is restricted by Apple for privacy and security reasons.  
+Instead, iOS provides a native feature called **Security Code AutoFill**, which suggests the OTP above the keyboard when properly configured.
+
+This library does **not** auto-read OTP on iOS.
+
+---
+
+## How iOS OTP AutoFill Works
+
+1. User receives an SMS containing an OTP.
+2. iOS detects the code.
+3. The OTP appears above the keyboard.
+4. User taps the suggestion.
+5. The code fills automatically into the input field.
+
+No SMS permissions required.
+
+---
+
+## React Native Setup
+
+Use the following configuration in your OTP input field:
+
+```tsx
+<TextInput
+  style={styles.input}
+  keyboardType="number-pad"
+  textContentType="oneTimeCode"
+  autoComplete="sms-otp"
+  importantForAutofill="yes"
+  maxLength={6}
+/>
+
+```
+
 
 ## react-native-otp-auto-verify Architecture Flow
 <img width="1536" height="1024" alt="react-native-otp-auto-verify Architecture Flow" src="https://github.com/user-attachments/assets/11582523-81cb-4904-9de0-56af05b3a3b4" />
