@@ -4,6 +4,7 @@
 [![npm version](https://img.shields.io/npm/v/react-native-otp-auto-verify.svg?style=flat-square)](https://www.npmjs.com/package/react-native-otp-auto-verify)      [![npm downloads](https://img.shields.io/npm/dm/react-native-otp-auto-verify.svg?style=flat-square)](https://www.npmjs.com/package/react-native-otp-auto-verify)      [![license](https://img.shields.io/npm/l/react-native-otp-auto-verify.svg?style=flat-square)](https://github.com/kailas-rathod/react-native-otp-auto-verify/blob/main/LICENSE)         [![typescript](https://img.shields.io/badge/TypeScript-Ready-blue.svg?style=flat-square)](https://www.typescriptlang.org/)
 
 **react-native-otp-auto-verify** is a lightweight and secure React Native OTP auto-verification library for Android, built on the official Google SMS Retriever API. It enables automatic OTP detection without requiring READ_SMS or RECEIVE_SMS permissions, ensuring full Google Play Store compliance and enhanced user trust. Designed for modern authentication flows, this library is ideal for fintech apps, banking applications, e-commerce platforms, and secure login systems.
+No Permissions: It requires zero SMS permissions from the user, making it compliant with strict Google Play Store policies
 
 With minimal dependencies and clean architecture, it integrates seamlessly into both React Native Old Architecture and the New Architecture (TurboModule) environments. The solution improves user experience by eliminating manual OTP entry on Android while maintaining strong server-side validation standards.
 
@@ -44,9 +45,13 @@ Supports both RN Old Architecture and React Native **New Architecture** (TurboMo
 
 ```sh
 npm install react-native-otp-auto-verify
+```
 # or
+```sh
 yarn add react-native-otp-auto-verify
+```
 # or
+```sh
 pnpm add react-native-otp-auto-verify
 ```
 
@@ -132,6 +137,150 @@ const sub = await activateOtpListener(
 sub.remove();
 // or
 removeListener();
+```
+🔹 Step 1 – Start OTP Listener
+```ts
+import { useOtpVerification } from 'react-native-otp-auto-verify';
+
+const { startOtpListener, stopListener, otp } = useOtpVerification();
+
+useEffect(() => {
+  startOtpListener();
+
+  return () => stopListener();
+}, []);
+```
+
+## Create OTP Screen (Recommended Hook Method)
+```ts
+import React, { useEffect, useState } from 'react';
+import {
+  View,
+  Text,
+  TextInput,
+  Button,
+  Platform,
+} from 'react-native';
+import { useOtpVerification } from 'react-native-otp-auto-verify';
+
+const OtpScreen = () => {
+  const [otpValue, setOtpValue] = useState('');
+
+  const {
+    otp,
+    hashCode,
+    timeoutError,
+    error,
+    startListening,
+    stopListening,
+  } = useOtpVerification({ numberOfDigits: 6 });
+
+  // Start listener when screen opens
+  useEffect(() => {
+    if (Platform.OS === 'android') {
+      startListening();
+    }
+
+    return () => {
+      stopListening();
+    };
+  }, []);
+
+  // Auto verify when OTP received
+  useEffect(() => {
+    if (otp) {
+      setOtpValue(otp);
+      verifyOtp(otp);
+    }
+  }, [otp]);
+
+  const verifyOtp = async (code: string) => {
+    console.log('Verifying OTP:', code);
+
+    // Call your backend API here
+    // await api.post('/verify-otp', { otp: code })
+  };
+
+  return (
+    <View style={{ padding: 20 }}>
+      <Text>Enter OTP</Text>
+
+      <TextInput
+        value={otpValue}
+        onChangeText={setOtpValue}
+        keyboardType="number-pad"
+        maxLength={6}
+        textContentType="oneTimeCode"
+        autoComplete="sms-otp"
+        style={{
+          borderWidth: 1,
+          padding: 12,
+          marginVertical: 12,
+        }}
+      />
+
+      <Button title="Verify" onPress={() => verifyOtp(otpValue)} />
+
+      {timeoutError && (
+        <Text style={{ color: 'red' }}>
+          Timeout. Please resend OTP.
+        </Text>
+      )}
+
+      {error && (
+        <Text style={{ color: 'red' }}>
+          Error: {error.message}
+        </Text>
+      )}
+    </View>
+  );
+};
+
+export default OtpScreen;
+```
+
+# Start OTP Listener in Screen
+
+```ts
+import React, { useEffect, useState } from 'react';
+import { View, TextInput, Text } from 'react-native';
+import { useOtpVerification } from 'react-native-otp-auto-verify';
+
+export default function OtpScreen() {
+  const [otpValue, setOtpValue] = useState('');
+
+  const {
+    otp,
+    startListening,
+    stopListening,
+  } = useOtpVerification({ numberOfDigits: 6 });
+
+  useEffect(() => {
+    startListening();   // Start listening
+
+    return () => {
+      stopListening();  // Cleanup
+    };
+  }, []);
+
+  useEffect(() => {
+    if (otp) {
+      setOtpValue(otp);   // OTP automatically retrieved here
+      console.log('Retrieved OTP:', otp);
+    }
+  }, [otp]);
+
+  return (
+    <View>
+      <TextInput
+        value={otpValue}
+        onChangeText={setOtpValue}
+        keyboardType="number-pad"
+        maxLength={6}
+      />
+    </View>
+  );
+}
 ```
 
 # iOS OTP AutoFill (Native)
@@ -232,6 +381,22 @@ The New Architecture (also known as Fabric + TurboModules) is React Native's new
 - Better performance and type safety
 - Synchronous native module calls
 - Improved interoperability with native code
+
+
+
+
+## ✨ Feature Comparison
+
+| Feature                  | react-native-otp-auto-verify | Other Packages/Libraries (react-native-otp-auto-verify)|
+|---------------------------|------------------------------|---------------------------|
+| SMS Retriever API        | ✅ Yes                      | ✅ Yes                   |
+| Requires SMS Permission  | ❌ No                       | ❌ No                    |
+| TurboModule Support      | ✅ Yes                      | ❌ Usually No            |
+| TypeScript Support       | ✅ Full                     | ⚠️ Partial               |
+| Hook API                 | ✅ `useOtpVerification`     | ❌ Not Available         |
+| App Hash Utility         | ✅ Built-in                 | ⚠️ Basic                 |
+| Architecture Ready       | ✅ Old + New                | ⚠️ Mostly Old Only       |
+| Maintenance              | ✅ Actively Maintained      | ⚠️ Varies                |
 
 ### Enabling New Architecture
 
