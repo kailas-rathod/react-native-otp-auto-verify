@@ -14,22 +14,16 @@
   resolve(@NO);
 }
 
-- (void)addListener:(NSString *)eventName {
-  // No-op on iOS; SMS Retriever is Android-only.
-}
+- (void)addListener:(NSString *)eventName {}
 
-- (void)removeListeners:(double)count {
-  // No-op on iOS.
-}
+- (void)removeListeners:(double)count {}
 
 - (std::shared_ptr<facebook::react::TurboModule>)getTurboModule:
-    (const facebook::react::ObjCTurboModule::InitParams &)params
-{
+    (const facebook::react::ObjCTurboModule::InitParams &)params {
   return std::make_shared<facebook::react::NativeOtpAutoVerifySpecJSI>(params);
 }
 
-+ (NSString *)moduleName
-{
++ (NSString *)moduleName {
   return @"OtpAutoVerify";
 }
 

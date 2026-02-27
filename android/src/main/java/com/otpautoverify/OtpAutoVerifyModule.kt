@@ -3,7 +3,6 @@ package com.otpautoverify
 import android.annotation.SuppressLint
 import android.content.IntentFilter
 import android.os.Build
-import android.util.Log
 import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.LifecycleEventListener
 import com.facebook.react.bridge.Promise
@@ -11,12 +10,12 @@ import com.facebook.react.bridge.ReactApplicationContext
 import com.google.android.gms.auth.api.phone.SmsRetriever
 import com.google.android.gms.tasks.OnFailureListener
 import com.google.android.gms.tasks.OnSuccessListener
+
 class OtpAutoVerifyModule(reactContext: ReactApplicationContext) :
     NativeOtpAutoVerifySpec(reactContext), LifecycleEventListener {
 
     companion object {
         const val NAME = NativeOtpAutoVerifySpec.NAME
-        private const val TAG = "OtpAutoVerifyModule"
         const val OTP_RECEIVED_EVENT = "otpReceived"
     }
 
@@ -42,8 +41,7 @@ class OtpAutoVerifyModule(reactContext: ReactApplicationContext) :
             }
             promise.resolve(arr)
         } catch (e: Exception) {
-            Log.e(TAG, "getHash failed", e)
-            promise.reject("GET_HASH_ERROR", e.message, e)
+            promise.reject("GET_HASH_ERROR", e.message ?: "Unknown error", e)
         }
     }
 
@@ -53,19 +51,15 @@ class OtpAutoVerifyModule(reactContext: ReactApplicationContext) :
             promise.reject("NO_ACTIVITY", "No current activity. Ensure the app is in the foreground.")
             return
         }
-
         registerReceiverIfNecessary(activity)
-
         val client = SmsRetriever.getClient(reactApplicationContext)
         client.startSmsRetriever()
             .addOnSuccessListener(OnSuccessListener {
-                Log.d(TAG, "SMS retriever started")
                 isListening = true
                 promise.resolve(true)
             })
             .addOnFailureListener(OnFailureListener { e ->
-                Log.e(TAG, "Failed to start SMS retriever", e)
-                promise.reject("START_SMS_RETRIEVER_ERROR", e.message, e)
+                promise.reject("START_SMS_RETRIEVER_ERROR", e.message ?: "Failed to start SMS retriever", e)
             })
     }
 
@@ -104,7 +98,6 @@ class OtpAutoVerifyModule(reactContext: ReactApplicationContext) :
         if (isReceiverRegistered && activity != null && smsReceiver != null) {
             try {
                 activity.unregisterReceiver(smsReceiver)
-                Log.d(TAG, "SMS receiver unregistered")
             } catch (e: Exception) {
                 Log.e(TAG, "Failed to unregister SMS receiver", e)
             }
@@ -114,16 +107,13 @@ class OtpAutoVerifyModule(reactContext: ReactApplicationContext) :
         isListening = false
     }
 
-    override fun addListener(eventName: String) {
-        // Required for NativeEventEmitter; no-op.
-    }
+    override fun addListener(eventName: String) {}
 
     override fun removeListeners(count: Double) {
         unregisterReceiver()
     }
 
     override fun onHostResume() {
-        // Optionally re-register if we were listening and activity was recreated.
         if (isListening && currentActivity != null && !isReceiverRegistered) {
             currentActivity?.let { registerReceiverIfNecessary(it) }
         }

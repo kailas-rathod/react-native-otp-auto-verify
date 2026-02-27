@@ -32,11 +32,15 @@
   },
   "license": "MIT",
   "author": "Kailas Rathod (https://github.com/kailas-rathod)",
-  "type": "commonjs",
-  "main": "./lib/module/index.js",
+  "main": "./lib/commonjs/index.js",
+  "module": "./lib/module/index.js",
   "types": "./lib/typescript/src/index.d.ts",
+  "react-native": "./lib/module/index.js",
+  "sideEffects": false,
+  "engines": {
+    "node": ">=18"
+  },
   "files": [
-    "src",
     "lib",
     "android",
     "ios",
@@ -91,11 +95,19 @@
     "typescript": "^5.9.3"
   },
   "peerDependencies": {
-    "react": "*",
-    "react-native": "*"
+    "react": ">=18 <20",
+    "react-native": ">=0.72.0"
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
+  },
+  "exports": {
+    ".": {
+      "types": "./lib/typescript/src/index.d.ts",
+      "react-native": "./lib/module/index.js",
+      "import": "./lib/module/index.js",
+      "require": "./lib/commonjs/index.js"
+    }
   },
   "packageManager": "yarn@4.11.0",
   "react-native-builder-bob": {
@@ -108,6 +120,7 @@
           "esm": true
         }
       ],
+      ["commonjs"],
       [
         "typescript",
         {
