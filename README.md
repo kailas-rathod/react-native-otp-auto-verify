@@ -11,6 +11,7 @@ With minimal dependencies and clean architecture, it integrates seamlessly into 
 Works best for onboarding/login flows in **banking**, **fintech**, and authentication-heavy apps.
 Supports both RN Old Architecture and React Native **New Architecture** (TurboModule).
 **Android**: automatic OTP detection.
+
 **iOS**: Uses iOS Security Code AutoFill (manual tap required).
 
 **Connect:** [GitHub](https://github.com/kailas-rathod/react-native-otp-auto-verify) · [npm](https://www.npmjs.com/package/react-native-otp-auto-verify) · [Issues](https://github.com/kailas-rathod/react-native-otp-auto-verify/issues) · [License](https://github.com/kailas-rathod/react-native-otp-auto-verify/blob/main/LICENSE)
