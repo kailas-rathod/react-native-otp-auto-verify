@@ -1,3 +1,19 @@
+jest.mock('../NativeOtpAutoVerify', () => ({
+  __esModule: true,
+  default: {
+    getConstants: () => ({ OTP_RECEIVED_EVENT: 'otpReceived' }),
+    getHash: jest.fn(),
+    startSmsRetriever: jest.fn(),
+    removeListeners: jest.fn(),
+  },
+}));
+
+jest.mock('react-native', () => ({
+  Platform: { OS: 'android' },
+  NativeModules: { OtpAutoVerify: {} },
+  NativeEventEmitter: jest.fn(),
+}));
+
 import { extractOtp } from '../index';
 
 describe('extractOtp', () => {

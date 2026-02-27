@@ -1,54 +1,76 @@
-const mockState = { platformOS: 'android' as 'android' | 'ios' };
-const mockGetHash = jest.fn();
-const mockRemoveListeners = jest.fn();
-const mockAddListener = jest.fn(() => ({ remove: jest.fn() }));
-
-jest.mock('react-native', () => ({
-  Platform: {
-    get OS() {
-      return mockState.platformOS;
+jest.mock('react-native', () => {
+  const state = { platformOS: 'android' as 'android' | 'ios' };
+  (global as typeof globalThis & { __mockPlatformState?: typeof state }).__mockPlatformState = state;
+  const mockAddListener = jest.fn(() => ({ remove: jest.fn() }));
+  (global as typeof globalThis & { __mockAddListener?: typeof mockAddListener }).__mockAddListener =
+    mockAddListener;
+  return {
+    Platform: {
+      get OS() {
+        return state.platformOS;
+      },
     },
-  },
-  NativeModules: { OtpAutoVerify: {} },
-  NativeEventEmitter: jest.fn().mockImplementation(() => ({
-    addListener: mockAddListener,
-  })),
-}));
+    NativeModules: { OtpAutoVerify: {} },
+    NativeEventEmitter: jest.fn().mockImplementation(() => ({
+      addListener: mockAddListener,
+    })),
+  };
+});
 
-jest.mock('../NativeOtpAutoVerify', () => ({
-  __esModule: true,
-  default: {
-    getConstants: () => ({ OTP_RECEIVED_EVENT: 'otpReceived' }),
-    getHash: (...args: unknown[]) => mockGetHash(...args),
-    startSmsRetriever: jest.fn().mockResolvedValue(true),
-    removeListeners: (...args: unknown[]) => mockRemoveListeners(...args),
-  },
-}));
+jest.mock('../NativeOtpAutoVerify', () => {
+  const getHash = jest.fn();
+  const removeListeners = jest.fn();
+  (
+    global as typeof globalThis & {
+      __mockNativeOtp?: { getHash: typeof getHash; removeListeners: typeof removeListeners };
+    }
+  ).__mockNativeOtp = { getHash, removeListeners };
+  return {
+    __esModule: true,
+    default: {
+      getConstants: () => ({ OTP_RECEIVED_EVENT: 'otpReceived' }),
+      getHash: (...args: unknown[]) => getHash(...args),
+      startSmsRetriever: jest.fn().mockResolvedValue(true),
+      removeListeners: (...args: unknown[]) => removeListeners(...args),
+    },
+  };
+});
+
+const getMockNativeOtp = () =>
+  (
+    global as typeof globalThis & {
+      __mockNativeOtp?: { getHash: jest.Mock; removeListeners: jest.Mock };
+    }
+  ).__mockNativeOtp!;
 
 import { getHash, removeListener, useOtpVerification } from '../index';
 
+const getMockState = () =>
+  (global as typeof globalThis & { __mockPlatformState?: { platformOS: 'android' | 'ios' } })
+    .__mockPlatformState!;
+
 describe('getHash', () => {
   beforeEach(() => {
-    mockState.platformOS = 'android';
-    mockGetHash.mockReset();
+    getMockState().platformOS = 'android';
+    getMockNativeOtp().getHash.mockReset();
   });
 
   it('returns hash array on Android', async () => {
-    mockGetHash.mockResolvedValue(['hash1', 'hash2']);
+    getMockNativeOtp().getHash.mockResolvedValue(['hash1', 'hash2']);
     const result = await getHash();
     expect(result).toEqual(['hash1', 'hash2']);
-    expect(mockGetHash).toHaveBeenCalled();
+    expect(getMockNativeOtp().getHash).toHaveBeenCalled();
   });
 
   it('returns empty array on iOS', async () => {
-    mockState.platformOS = 'ios';
+    getMockState().platformOS = 'ios';
     const result = await getHash();
     expect(result).toEqual([]);
-    expect(mockGetHash).not.toHaveBeenCalled();
+    expect(getMockNativeOtp().getHash).not.toHaveBeenCalled();
   });
 
   it('returns Array from native result', async () => {
-    mockGetHash.mockResolvedValue(['only']);
+    getMockNativeOtp().getHash.mockResolvedValue(['only']);
     const result = await getHash();
     expect(Array.isArray(result)).toBe(true);
     expect(result).toHaveLength(1);
@@ -58,19 +80,19 @@ describe('getHash', () => {
 
 describe('removeListener', () => {
   beforeEach(() => {
-    mockState.platformOS = 'android';
-    mockRemoveListeners.mockClear();
+    getMockState().platformOS = 'android';
+    getMockNativeOtp().removeListeners.mockClear();
   });
 
   it('calls removeListeners on Android', () => {
     removeListener();
-    expect(mockRemoveListeners).toHaveBeenCalledWith(0);
+    expect(getMockNativeOtp().removeListeners).toHaveBeenCalledWith(0);
   });
 
   it('does not call removeListeners on iOS', () => {
-    mockState.platformOS = 'ios';
+    getMockState().platformOS = 'ios';
     removeListener();
-    expect(mockRemoveListeners).not.toHaveBeenCalled();
+    expect(getMockNativeOtp().removeListeners).not.toHaveBeenCalled();
   });
 });
 
