@@ -1,10 +1,10 @@
 # react-native-otp-auto-verify
 
-
-[![npm version](https://img.shields.io/npm/v/react-native-otp-auto-verify.svg?style=flat-square)](https://www.npmjs.com/package/react-native-otp-auto-verify)      [![npm downloads](https://img.shields.io/npm/dm/react-native-otp-auto-verify.svg?style=flat-square)](https://www.npmjs.com/package/react-native-otp-auto-verify)      [![license](https://img.shields.io/npm/l/react-native-otp-auto-verify.svg?style=flat-square)](https://github.com/kailas-rathod/react-native-otp-auto-verify/blob/main/LICENSE)         [![typescript](https://img.shields.io/badge/TypeScript-Ready-blue.svg?style=flat-square)](https://www.typescriptlang.org/)
+[![npm version](https://img.shields.io/npm/v/react-native-otp-auto-verify.svg?style=flat-square)](https://www.npmjs.com/package/react-native-otp-auto-verify) [![npm downloads](https://img.shields.io/npm/dm/react-native-otp-auto-verify.svg?style=flat-square)](https://www.npmjs.com/package/react-native-otp-auto-verify) [![license](https://img.shields.io/npm/l/react-native-otp-auto-verify.svg?style=flat-square)](https://github.com/kailas-rathod/react-native-otp-auto-verify/blob/main/LICENSE) [![typescript](https://img.shields.io/badge/TypeScript-Ready-blue.svg?style=flat-square)](https://www.typescriptlang.org/)
 
 **react-native-otp-auto-verify** is a lightweight and secure React Native OTP auto-verification library for Android, built on the official Google SMS Retriever API. It enables automatic OTP detection without requiring READ_SMS or RECEIVE_SMS permissions, ensuring full Google Play Store compliance and enhanced user trust. Designed for modern authentication flows, this library is ideal for fintech apps, banking applications, e-commerce platforms, and secure login systems.
-No Permissions: It requires zero SMS permissions from the user, making it compliant with strict Google Play Store policies
+
+- **No permissions**: It requires zero SMS permissions from the user, making it compliant with strict Google Play Store policies.
 
 With minimal dependencies and clean architecture, it integrates seamlessly into both React Native Old Architecture and the New Architecture (TurboModule) environments. The solution improves user experience by eliminating manual OTP entry on Android while maintaining strong server-side validation standards.
 
@@ -17,8 +17,8 @@ Supports both RN Old Architecture and React Native **New Architecture** (TurboMo
 **Connect:** [GitHub](https://github.com/kailas-rathod/react-native-otp-auto-verify) · [npm](https://www.npmjs.com/package/react-native-otp-auto-verify) · [Issues](https://github.com/kailas-rathod/react-native-otp-auto-verify/issues) · [License](https://github.com/kailas-rathod/react-native-otp-auto-verify/blob/main/LICENSE)
 
 ---
-<img width="1536" height="1024" alt="otp" src="https://github.com/user-attachments/assets/e4908e99-e7d1-4a96-a6d2-b92c50090db0" />
 
+<img width="1536" height="1024" alt="otp" src="https://github.com/user-attachments/assets/e4908e99-e7d1-4a96-a6d2-b92c50090db0" />
 
 ## Features
 
@@ -28,34 +28,39 @@ Supports both RN Old Architecture and React Native **New Architecture** (TurboMo
 - ✅ **Hook + Imperative API**: `useOtpVerification()` for screens, `activateOtpListener()` for custom flows
 - ✅ **TypeScript**: typed options and return values
 - ✅ **New Architecture ready**: TurboModule implementation; works with Old Architecture too
+
 ---
 
 ## Platform Support
 
-| Platform | Support | Notes |
-|----------|----------|-------|
-| Android  | ✅ | Requires Google Play Services on device |
+| Platform | Support        | Notes                                                 |
+| -------- | -------------- | ----------------------------------------------------- |
+| Android  | ✅             | Requires Google Play Services on device               |
 | iOS      | ✅ Native Only | Uses iOS Security Code AutoFill (manual tap required) |
 
 ## Requirements
 
 - React Native: **0.60+** (autolinking)
 - Android: **minSdkVersion 24+**
+- **TurboModule**: The library uses codegen/TurboModule. The native module must be built and linked. If it is not registered (e.g. build issue or unsupported setup), importing the library will throw at load time.
 
 ## Installation
 
 ```sh
 npm install react-native-otp-auto-verify
 ```
+
 # or
+
 ```sh
 yarn add react-native-otp-auto-verify
 ```
+
 # or
+
 ```sh
 pnpm add react-native-otp-auto-verify
 ```
-
 
 ## Usage
 
@@ -86,6 +91,7 @@ Recommended format:
 Dear Kailas Rathod, 321500 is your OTP for mobile authentication. This OTP is valid for the next 15 minutes. Please DO NOT share it with anyone.
 uW87Uq6teXc
 ```
+
 Note: You do not need `<#>` at the start of the message.
 
 ### 3) Hook usage (recommended)
@@ -139,42 +145,33 @@ sub.remove();
 // or
 removeListener();
 ```
+
 🔹 Step 1 – Start OTP Listener
+
 ```ts
 import { useOtpVerification } from 'react-native-otp-auto-verify';
 
-const { startOtpListener, stopListener, otp } = useOtpVerification();
+const { startListening, stopListening, otp } = useOtpVerification();
 
 useEffect(() => {
-  startOtpListener();
+  startListening();
 
-  return () => stopListener();
+  return () => stopListening();
 }, []);
 ```
 
 ## Create OTP Screen (Recommended Hook Method)
+
 ```ts
 import React, { useEffect, useState } from 'react';
-import {
-  View,
-  Text,
-  TextInput,
-  Button,
-  Platform,
-} from 'react-native';
+import { View, Text, TextInput, Button, Platform } from 'react-native';
 import { useOtpVerification } from 'react-native-otp-auto-verify';
 
 const OtpScreen = () => {
   const [otpValue, setOtpValue] = useState('');
 
-  const {
-    otp,
-    hashCode,
-    timeoutError,
-    error,
-    startListening,
-    stopListening,
-  } = useOtpVerification({ numberOfDigits: 6 });
+  const { otp, hashCode, timeoutError, error, startListening, stopListening } =
+    useOtpVerification({ numberOfDigits: 6 });
 
   // Start listener when screen opens
   useEffect(() => {
@@ -223,16 +220,10 @@ const OtpScreen = () => {
       <Button title="Verify" onPress={() => verifyOtp(otpValue)} />
 
       {timeoutError && (
-        <Text style={{ color: 'red' }}>
-          Timeout. Please resend OTP.
-        </Text>
+        <Text style={{ color: 'red' }}>Timeout. Please resend OTP.</Text>
       )}
 
-      {error && (
-        <Text style={{ color: 'red' }}>
-          Error: {error.message}
-        </Text>
-      )}
+      {error && <Text style={{ color: 'red' }}>Error: {error.message}</Text>}
     </View>
   );
 };
@@ -250,23 +241,21 @@ import { useOtpVerification } from 'react-native-otp-auto-verify';
 export default function OtpScreen() {
   const [otpValue, setOtpValue] = useState('');
 
-  const {
-    otp,
-    startListening,
-    stopListening,
-  } = useOtpVerification({ numberOfDigits: 6 });
+  const { otp, startListening, stopListening } = useOtpVerification({
+    numberOfDigits: 6,
+  });
 
   useEffect(() => {
-    startListening();   // Start listening
+    startListening(); // Start listening
 
     return () => {
-      stopListening();  // Cleanup
+      stopListening(); // Cleanup
     };
   }, []);
 
   useEffect(() => {
     if (otp) {
-      setOtpValue(otp);   // OTP automatically retrieved here
+      setOtpValue(otp); // OTP automatically retrieved here
       console.log('Retrieved OTP:', otp);
     }
   }, [otp]);
@@ -320,11 +309,10 @@ Use the following configuration in your OTP input field:
   importantForAutofill="yes"
   maxLength={6}
 />
-
 ```
 
-
 ## react-native-otp-auto-verify Architecture Flow
+
 <img width="1536" height="1024" alt="react-native-otp-auto-verify Architecture Flow" src="https://github.com/user-attachments/assets/11582523-81cb-4904-9de0-56af05b3a3b4" />
 
 ## API Reference
@@ -332,21 +320,21 @@ Use the following configuration in your OTP input field:
 ### `useOtpVerification(options?)`
 
 Use this on your OTP screen. It manages:
+
 - getting the app hash (`hashCode`)
 - starting/stopping the SMS Retriever listener
 - extracting OTP and exposing it as `otp`
 
-| Property | Type | Default | Description |
-|----------|------|---------|-------------|
-| `numberOfDigits` | `4 \| 5 \| 6` | `6` | OTP length to extract |
-| `hashCode` | `string` | `''` | App hash (send to backend) |
-| `otp` | `string \| null` | `null` | Extracted OTP |
-| `sms` | `string \| null` | `null` | Full SMS text |
-| `timeoutError` | `boolean` | `false` | Timeout occurred |
-| `error` | `Error \| null` | `null` | Set when getHash or startListening fails |
-| `startListening` | `() => Promise<void>` | — | Start listening |
-| `stopListening` | `() => void` | — | Stop listening |
-
+| Property         | Type                  | Default | Description                              |
+| ---------------- | --------------------- | ------- | ---------------------------------------- |
+| `numberOfDigits` | `4 \| 5 \| 6`         | `6`     | OTP length to extract                    |
+| `hashCode`       | `string`              | `''`    | App hash (send to backend)               |
+| `otp`            | `string \| null`      | `null`  | Extracted OTP                            |
+| `sms`            | `string \| null`      | `null`  | Full SMS text                            |
+| `timeoutError`   | `boolean`             | `false` | Timeout occurred                         |
+| `error`          | `Error \| null`       | `null`  | Set when getHash or startListening fails |
+| `startListening` | `() => Promise<void>` | —       | Start listening                          |
+| `stopListening`  | `() => void`          | —       | Stop listening                           |
 
 ### `getHash(): Promise<string[]>`
 
@@ -383,21 +371,18 @@ The New Architecture (also known as Fabric + TurboModules) is React Native's new
 - Synchronous native module calls
 - Improved interoperability with native code
 
-
-
-
 ## ✨ Feature Comparison
 
-| Feature                  | react-native-otp-auto-verify | Other Packages/Libraries (react-native-otp-auto-verify)|
-|---------------------------|------------------------------|---------------------------|
-| SMS Retriever API        | ✅ Yes                      | ✅ Yes                   |
-| Requires SMS Permission  | ❌ No                       | ❌ No                    |
-| TurboModule Support      | ✅ Yes                      | ❌ Usually No            |
-| TypeScript Support       | ✅ Full                     | ⚠️ Partial               |
-| Hook API                 | ✅ `useOtpVerification`     | ❌ Not Available         |
-| App Hash Utility         | ✅ Built-in                 | ⚠️ Basic                 |
-| Architecture Ready       | ✅ Old + New                | ⚠️ Mostly Old Only       |
-| Maintenance              | ✅ Actively Maintained      | ⚠️ Varies                |
+| Feature                 | react-native-otp-auto-verify | Other packages     |
+| ----------------------- | ---------------------------- | ------------------ |
+| SMS Retriever API       | ✅ Yes                       | ✅ Yes             |
+| Requires SMS Permission | ❌ No                        | ❌ No              |
+| TurboModule Support     | ✅ Yes                       | ❌ Usually No      |
+| TypeScript Support      | ✅ Full                      | ⚠️ Partial         |
+| Hook API                | ✅ `useOtpVerification`      | ❌ Not Available   |
+| App Hash Utility        | ✅ Built-in                  | ⚠️ Basic           |
+| Architecture Ready      | ✅ Old + New                 | ⚠️ Mostly Old Only |
+| Maintenance             | ✅ Actively Maintained       | ⚠️ Varies          |
 
 ### Enabling New Architecture
 
@@ -459,6 +444,7 @@ See [`CONTRIBUTING.md`](CONTRIBUTING.md).
 Maintainers: see [RELEASE_CHECKLIST.md](./RELEASE_CHECKLIST.md) before publishing a new version to npm.
 
 ## Keywords
+
 react native otp auto verify, react native sms retriever api, automatic otp detection android, react native otp autofill, sms retriever react native, otp verification library react native, google play compliant otp library
 
 ## License

@@ -1,54 +1,70 @@
-const mockState = { platformOS: 'android' as 'android' | 'ios' };
-const mockGetHash = jest.fn();
-const mockRemoveListeners = jest.fn();
-const mockAddListener = jest.fn(() => ({ remove: jest.fn() }));
+type MockGlobals = {
+  __mockPlatformOS: { platformOS: string };
+  __mockGetHash: jest.Mock;
+  __mockRemoveListeners: jest.Mock;
+};
 
-jest.mock('react-native', () => ({
-  Platform: {
-    get OS() {
-      return mockState.platformOS;
+const mockG = global as unknown as MockGlobals;
+
+jest.mock('react-native', () => {
+  const g = global as unknown as MockGlobals;
+  const platformState = { platformOS: 'android' };
+  g.__mockPlatformOS = platformState;
+  const addListener = jest.fn(() => ({ remove: jest.fn() }));
+  return {
+    Platform: {
+      get OS() {
+        return g.__mockPlatformOS.platformOS;
+      },
     },
-  },
-  NativeModules: { OtpAutoVerify: {} },
-  NativeEventEmitter: jest.fn().mockImplementation(() => ({
-    addListener: mockAddListener,
-  })),
-}));
+    NativeModules: { OtpAutoVerify: {} },
+    NativeEventEmitter: jest.fn().mockImplementation(() => ({
+      addListener,
+    })),
+  };
+});
 
-jest.mock('../NativeOtpAutoVerify', () => ({
-  __esModule: true,
-  default: {
-    getConstants: () => ({ OTP_RECEIVED_EVENT: 'otpReceived' }),
-    getHash: (...args: unknown[]) => mockGetHash(...args),
-    startSmsRetriever: jest.fn().mockResolvedValue(true),
-    removeListeners: (...args: unknown[]) => mockRemoveListeners(...args),
-  },
-}));
+jest.mock('../NativeOtpAutoVerify', () => {
+  const g = global as unknown as MockGlobals;
+  const getHash = jest.fn();
+  const removeListeners = jest.fn();
+  g.__mockGetHash = getHash;
+  g.__mockRemoveListeners = removeListeners;
+  return {
+    __esModule: true,
+    default: {
+      getConstants: () => ({ OTP_RECEIVED_EVENT: 'otpReceived' }),
+      getHash: (...args: unknown[]) => getHash(...args),
+      startSmsRetriever: jest.fn().mockResolvedValue(true),
+      removeListeners: (...args: unknown[]) => removeListeners(...args),
+    },
+  };
+});
 
 import { getHash, removeListener, useOtpVerification } from '../index';
 
 describe('getHash', () => {
   beforeEach(() => {
-    mockState.platformOS = 'android';
-    mockGetHash.mockReset();
+    mockG.__mockPlatformOS.platformOS = 'android';
+    mockG.__mockGetHash.mockReset();
   });
 
   it('returns hash array on Android', async () => {
-    mockGetHash.mockResolvedValue(['hash1', 'hash2']);
+    mockG.__mockGetHash.mockResolvedValue(['hash1', 'hash2']);
     const result = await getHash();
     expect(result).toEqual(['hash1', 'hash2']);
-    expect(mockGetHash).toHaveBeenCalled();
+    expect(mockG.__mockGetHash).toHaveBeenCalled();
   });
 
   it('returns empty array on iOS', async () => {
-    mockState.platformOS = 'ios';
+    mockG.__mockPlatformOS.platformOS = 'ios';
     const result = await getHash();
     expect(result).toEqual([]);
-    expect(mockGetHash).not.toHaveBeenCalled();
+    expect(mockG.__mockGetHash).not.toHaveBeenCalled();
   });
 
   it('returns Array from native result', async () => {
-    mockGetHash.mockResolvedValue(['only']);
+    mockG.__mockGetHash.mockResolvedValue(['only']);
     const result = await getHash();
     expect(Array.isArray(result)).toBe(true);
     expect(result).toHaveLength(1);
@@ -58,19 +74,19 @@ describe('getHash', () => {
 
 describe('removeListener', () => {
   beforeEach(() => {
-    mockState.platformOS = 'android';
-    mockRemoveListeners.mockClear();
+    mockG.__mockPlatformOS.platformOS = 'android';
+    mockG.__mockRemoveListeners.mockClear();
   });
 
   it('calls removeListeners on Android', () => {
     removeListener();
-    expect(mockRemoveListeners).toHaveBeenCalledWith(0);
+    expect(mockG.__mockRemoveListeners).toHaveBeenCalledWith(0);
   });
 
   it('does not call removeListeners on iOS', () => {
-    mockState.platformOS = 'ios';
+    mockG.__mockPlatformOS.platformOS = 'ios';
     removeListener();
-    expect(mockRemoveListeners).not.toHaveBeenCalled();
+    expect(mockG.__mockRemoveListeners).not.toHaveBeenCalled();
   });
 });
 

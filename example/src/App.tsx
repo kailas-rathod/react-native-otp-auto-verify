@@ -15,14 +15,8 @@ import { useOtpVerification } from 'react-native-otp-auto-verify';
 const OTP_LENGTH = 6;
 
 function OtpVerifyScreen() {
-  const {
-    hashCode,
-    otp,
-    sms,
-    timeoutError,
-    startListening,
-    stopListening,
-  } = useOtpVerification({ numberOfDigits: OTP_LENGTH });
+  const { hashCode, otp, sms, timeoutError, startListening, stopListening } =
+    useOtpVerification({ numberOfDigits: OTP_LENGTH });
 
   const [manualOtp, setManualOtp] = React.useState('');
   const [loading, setLoading] = React.useState(false);
@@ -34,9 +28,7 @@ function OtpVerifyScreen() {
     try {
       await startListening();
     } catch (e) {
-      setError(
-        e instanceof Error ? e.message : 'Failed to start OTP listener'
-      );
+      setError(e instanceof Error ? e.message : 'Failed to start OTP listener');
     } finally {
       setLoading(false);
     }

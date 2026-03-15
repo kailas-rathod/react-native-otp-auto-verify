@@ -1,6 +1,6 @@
 import { TurboModuleRegistry, type TurboModule } from 'react-native';
 
-export interface Spec extends TurboModule {
+export interface OtpAutoVerifySpec extends TurboModule {
   getConstants(): { OTP_RECEIVED_EVENT: string };
   getHash(): Promise<ReadonlyArray<string>>;
   startSmsRetriever(): Promise<boolean>;
@@ -8,4 +8,6 @@ export interface Spec extends TurboModule {
   removeListeners(count: number): void;
 }
 
-export default TurboModuleRegistry.getEnforcing<Spec>('OtpAutoVerify');
+export default TurboModuleRegistry.getEnforcing<OtpAutoVerifySpec>(
+  'OtpAutoVerify'
+);

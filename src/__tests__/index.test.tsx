@@ -1,3 +1,10 @@
+jest.mock('../NativeOtpAutoVerify', () => ({
+  __esModule: true,
+  default: {
+    getConstants: () => ({ OTP_RECEIVED_EVENT: 'otpReceived' }),
+  },
+}));
+
 import { extractOtp } from '../index';
 
 describe('extractOtp', () => {

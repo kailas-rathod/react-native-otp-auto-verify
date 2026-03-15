@@ -49,7 +49,10 @@ export interface OtpListenerSubscription {
   remove: () => void;
 }
 
-/** Extracts a numeric OTP of 4–6 digits from SMS text. */
+/**
+ * Extracts a numeric OTP of 4, 5, or 6 digits from SMS text.
+ * Only these lengths are supported (numberOfDigits: 4 | 5 | 6).
+ */
 export function extractOtp(
   sms: string,
   numberOfDigits: OtpDigits = DEFAULT_DIGITS
@@ -95,7 +98,10 @@ export async function activateOtpListener(
   };
 }
 
-/** Stops SMS listening and removes all listeners. */
+/**
+ * Stops SMS listening and removes all listeners.
+ * The native module ignores the count parameter and always unregisters the SMS receiver.
+ */
 export function removeListener(): void {
   if (Platform.OS === 'android') {
     NativeOtpAutoVerify.removeListeners(0);
