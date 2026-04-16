@@ -1,6 +1,6 @@
 import { NativeModules, TurboModuleRegistry, type TurboModule } from 'react-native';
 
-export interface OtpAutoVerifySpec extends TurboModule {
+export interface Spec extends TurboModule {
   getConstants(): { OTP_RECEIVED_EVENT: string };
   getHash(): Promise<ReadonlyArray<string>>;
   startSmsRetriever(): Promise<boolean>;
@@ -8,9 +8,9 @@ export interface OtpAutoVerifySpec extends TurboModule {
   removeListeners(count: number): void;
 }
 
-function getNativeModule(): OtpAutoVerifySpec {
+function getNativeModule(): Spec {
   try {
-    return TurboModuleRegistry.getEnforcing<OtpAutoVerifySpec>('OtpAutoVerify');
+    return TurboModuleRegistry.getEnforcing<Spec>('OtpAutoVerify');
   } catch {
     const legacy = NativeModules.OtpAutoVerify;
     if (!legacy) {
@@ -18,8 +18,10 @@ function getNativeModule(): OtpAutoVerifySpec {
         'OtpAutoVerify native module is not available. Ensure the library is properly linked.'
       );
     }
-    return legacy as OtpAutoVerifySpec;
+    return legacy as Spec;
   }
 }
 
 export default getNativeModule();
+
+
