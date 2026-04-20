@@ -62,7 +62,7 @@
     "release": "release-it --only-version"
   },
   "devDependencies": {
-    "@commitlint/config-conventional": "^19.8.1",
+    "@commitlint/config-conventional": "^20.5.0",
     "@eslint/compat": "^2.0.5",
     "@eslint/eslintrc": "^3.3.4",
     "@eslint/js": "^10.0.1",
