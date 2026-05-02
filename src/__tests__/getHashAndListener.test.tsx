@@ -32,12 +32,12 @@ jest.mock('../NativeOtpAutoVerify', () => {
   g.__mockRemoveListeners = removeListeners;
   return {
     __esModule: true,
-    default: {
+    getOtpNativeModule: () => ({
       getConstants: () => ({ OTP_RECEIVED_EVENT: 'otpReceived' }),
       getHash: (...args: unknown[]) => getHash(...args),
       startSmsRetriever: jest.fn().mockResolvedValue(true),
       removeListeners: (...args: unknown[]) => removeListeners(...args),
-    },
+    }),
   };
 });
 

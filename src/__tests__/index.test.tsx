@@ -1,8 +1,8 @@
 jest.mock('../NativeOtpAutoVerify', () => ({
   __esModule: true,
-  default: {
+  getOtpNativeModule: () => ({
     getConstants: () => ({ OTP_RECEIVED_EVENT: 'otpReceived' }),
-  },
+  }),
 }));
 
 import { extractOtp } from '../index';
@@ -11,6 +11,7 @@ describe('extractOtp', () => {
   it('extracts 6-digit OTP from message', () => {
     expect(extractOtp('Your code is 123456', 6)).toBe('123456');
     expect(extractOtp('123456 is your OTP', 6)).toBe('123456');
+    expect(extractOtp('OTP:123456', 6)).toBe('123456');
   });
 
   it('extracts 4-digit OTP from message', () => {

@@ -1,15 +1,9 @@
 import * as React from 'react';
 import { NativeEventEmitter, Platform } from 'react-native';
-import NativeOtpAutoVerify from './NativeOtpAutoVerify';
+import { getOtpNativeModule } from './NativeOtpAutoVerify';
 
-const eventEmitter =
-  Platform.OS === 'android' && NativeOtpAutoVerify
-    ? new NativeEventEmitter(NativeOtpAutoVerify)
-    : null;
-
-const OTP_RECEIVED_EVENT =
-  (NativeOtpAutoVerify.getConstants?.()?.OTP_RECEIVED_EVENT as string) ??
-  'otpReceived';
+/** Must match native `OTP_RECEIVED_EVENT` (Android/iOS). */
+export const OTP_RECEIVED_EVENT = 'otpReceived';
 
 export const TIMEOUT_MESSAGE = 'Timeout Error.';
 const DEFAULT_DIGITS = 6;
@@ -19,11 +13,29 @@ const MAX_OTP_DIGITS = 8;
 
 export type OtpDigits = 4 | 5 | 6 | 7 | 8;
 
-function getOtpRegex(digits: number): RegExp {
-  if (digits < MIN_OTP_DIGITS || digits > MAX_OTP_DIGITS) {
-    return new RegExp(`\\b(\\d{${DEFAULT_DIGITS}})\\b`);
+let androidEventEmitter: NativeEventEmitter | null | undefined;
+
+function getAndroidEventEmitter(): NativeEventEmitter | null {
+  if (Platform.OS !== 'android') return null;
+  if (androidEventEmitter !== undefined) {
+    return androidEventEmitter;
   }
-  return new RegExp(`\\b(\\d{${digits}})\\b`);
+  try {
+    androidEventEmitter = new NativeEventEmitter(getOtpNativeModule());
+    return androidEventEmitter;
+  } catch {
+    androidEventEmitter = null;
+    return null;
+  }
+}
+
+function getOtpRegex(digits: number): RegExp {
+  const d =
+    digits >= MIN_OTP_DIGITS && digits <= MAX_OTP_DIGITS
+      ? digits
+      : DEFAULT_DIGITS;
+  // Prefer non-`\b` boundaries so OTPs still match after ":" and similar (e.g. "OTP:123456").
+  return new RegExp(`(^|[^0-9])(\\d{${d}})(?!\\d)`);
 }
 
 export interface UseOtpVerificationOptions {
@@ -64,13 +76,13 @@ export function extractOtp(
   if (!trimmed) return null;
   const regex = getOtpRegex(numberOfDigits);
   const match = trimmed.match(regex);
-  return match ? match[1]! : null;
+  return match ? match[2]! : null;
 }
 
 /** Returns app hash strings for the current app. Android only; iOS returns []. */
 export async function getHash(): Promise<string[]> {
   if (Platform.OS !== 'android') return [];
-  const arr = await NativeOtpAutoVerify.getHash();
+  const arr = await getOtpNativeModule().getHash();
   return Array.from(arr);
 }
 
@@ -84,12 +96,17 @@ export async function activateOtpListener(
   handler: (sms: string, extractedOtp?: string | null) => void,
   options?: { numberOfDigits?: OtpDigits }
 ): Promise<OtpListenerSubscription> {
-  if (Platform.OS !== 'android' || !eventEmitter) {
+  if (Platform.OS !== 'android') {
+    return NOOP_SUBSCRIPTION;
+  }
+
+  const emitter = getAndroidEventEmitter();
+  if (!emitter) {
     return NOOP_SUBSCRIPTION;
   }
 
   const numberOfDigits = options?.numberOfDigits ?? DEFAULT_DIGITS;
-  const subscription = eventEmitter.addListener(
+  const subscription = emitter.addListener(
     OTP_RECEIVED_EVENT,
     (...args: unknown[]) => {
       const smsText = String(args[0] ?? '');
@@ -97,11 +114,21 @@ export async function activateOtpListener(
     }
   );
 
-  await NativeOtpAutoVerify.startSmsRetriever();
+  try {
+    await getOtpNativeModule().startSmsRetriever();
+  } catch (err) {
+    subscription.remove();
+    throw err;
+  }
+
   return {
     remove: () => {
       subscription.remove();
-      NativeOtpAutoVerify.removeListeners(0);
+      try {
+        getOtpNativeModule().removeListeners(0);
+      } catch {
+        // Native may be unavailable during teardown
+      }
     },
   };
 }
@@ -111,8 +138,11 @@ export async function activateOtpListener(
  * The native module ignores the count parameter and always unregisters the SMS receiver.
  */
 export function removeListener(): void {
-  if (Platform.OS === 'android') {
-    NativeOtpAutoVerify.removeListeners(0);
+  if (Platform.OS !== 'android') return;
+  try {
+    getOtpNativeModule().removeListeners(0);
+  } catch {
+    // Native not linked or already torn down
   }
 }
 
@@ -153,7 +183,9 @@ export function useOtpVerification(
         const hashes = await getHash();
         setHashCode(hashes[0] ?? '');
       } catch (err) {
-        setError(err instanceof Error ? err : new Error(String(err)));
+        const wrapped = err instanceof Error ? err : new Error(String(err));
+        setError(wrapped);
+        return;
       }
 
       const sub = await activateOtpListener(
@@ -193,5 +225,3 @@ export function useOtpVerification(
     [hashCode, otp, sms, timeoutError, error, startListening, stopListening]
   );
 }
-
-export { OTP_RECEIVED_EVENT };

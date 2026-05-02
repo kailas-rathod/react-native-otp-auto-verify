@@ -83,12 +83,6 @@ class OtpAutoVerifyModule(reactContext: ReactApplicationContext) :
                     null,
                     android.content.Context.RECEIVER_EXPORTED
                 )
-            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-                activity.registerReceiver(
-                    smsReceiver,
-                    filter,
-                    android.content.Context.RECEIVER_EXPORTED
-                )
             } else {
                 activity.registerReceiver(smsReceiver, filter)
             }
@@ -137,7 +131,8 @@ class OtpAutoVerifyModule(reactContext: ReactApplicationContext) :
     }
 
     override fun onHostPause() {
-        unregisterReceiver()
+        // Keep the SMS receiver registered while paused so OTP can still arrive if the user
+        // briefly switches away (e.g. to read the SMS). Teardown happens in onHostDestroy / invalidate.
     }
 
     override fun onHostDestroy() {
